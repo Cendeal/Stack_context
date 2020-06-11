@@ -8,6 +8,7 @@
         div {
             width: 500px;
             height: 30px;
+            user-select: none;
         }
 
         .root {
@@ -131,7 +132,7 @@
         divs.push(div)
     }
 
-    function init(flag = true) {
+    function init() {
         const root = document.getElementById('root')
         let moveSelectNode = document.getElementById('action')
         let orders = document.getElementById('order')
