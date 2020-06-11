@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stack context</title>
+    <style>
+        div {
+            width: 500px;
+            height: 30px;
+        }
+
+        .root {
+            height: 500px;
+            width: 800px;
+            margin-top: 100px;
+            background: rgba(26, 255, 214, 0.85);
+        }
+
+        .block {
+            display: block;
+            background: dodgerblue;
+            transform: rotate(-35deg);
+        }
+
+        .block-inline {
+            display: inline-block;
+            background: blue;
+            transform: rotate(-13deg);
+        }
+
+        .float {
+            float: left;
+            background: green;
+            transform: rotate(-69deg);
+        }
+
+        .inline {
+            display: inline;
+            background: greenyellow;
+            padding-right: 1000px;
+        }
+
+        .z-index-auto {
+            z-index: auto;
+            background: orange;
+            transform: rotate(-56deg);
+        }
+
+        .z-index-zero {
+            z-index: 0;
+            background: oldlace;
+            transform: rotate(-139deg);
+        }
+
+        .z-index-plus {
+            z-index: 1;
+            background: red;
+            transform: rotate(-110deg);
+        }
+
+        .z-index-sub {
+            z-index: -1;
+            background: purple;
+            transform: rotate(-91deg);
+        }
+        .bottom{
+            margin: 25px;
+            border-radius: 10px;
+            position: fixed;
+            max-width: 600px;
+            z-index: 9999;
+            bottom: 0;
+            table-layout: fixed;
+            background: rgba(0,0,0,0.5);
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+<table class="bottom">
+    <tr>
+        <td>zIndex的position</td>
+        <td>
+            <select id="select">
+                <option>static</option>
+                <option>relative</option>
+                <option>absolute</option>
+                <option>sticky</option>
+            </select>
+            <button onclick="setIndexPosition()">确定</button>
+        </td>
+    </tr>
+    <tr>
+        <td>显示/隐藏</td>
+        <td id="action"></td>
+    </tr>
+</table>
+
+<div class="root" id="root" title="0#root">0#root
+
+</div>
+<script>
+    const moves = ['zIndexPlus' , 'zIndexAuto',  'inline', 'inlineBlock','float', 'block',  'zIndex0', 'zIndexSub']
+    const classes = {
+        inline:'inline',
+        inlineBlock:'block-inline',
+        float:'float',
+        block:'block',
+        zIndexPlus:'z-index-plus z-index',
+        zIndex0:'z-index-zero z-index',
+        zIndexSub:'z-index-sub z-index',
+        zIndexAuto:'z-index-auto z-index'
+    }
+
+    function init() {
+        const root = document.getElementById('root')
+        let moveSelectNode = document.getElementById('action')
+        let nodes = []
+        let divs = []
+        for (let i=1 ;i<=moves.length;i++) {
+            let item = moves[i-1]
+            let div = document.createElement('div')
+            div.innerText = div.title = `#${i}-${item}`
+            div.className = classes[item]
+            div.id = item
+            divs.push(div)
+
+            // init checkbox
+            let checkbox = document.createElement('input')
+            checkbox.type = 'checkbox'
+            checkbox.checked = true
+            checkbox.value = item
+            checkbox.addEventListener('click',()=>{
+                const target = document.getElementById(item)
+                if(!checkbox.checked&&target){
+                    target.style.visibility = 'hidden'
+                }else {
+                    target.style.visibility = 'visible'
+                }
+            })
+            let span = document.createElement('span')
+            span.innerText = `#${i}-${item}`
+            nodes.push(checkbox)
+            nodes.push(span)
+        }
+        root.append(...divs)
+        moveSelectNode.append(...nodes)
+    }
+
+
+    function setIndexPosition() {
+        const val = document.getElementById('select').value;
+        let zIndex = document.getElementsByClassName('z-index')
+        console.log(zIndex)
+        for (let item of zIndex) {
+            item.style.position = val
+        }
+    }
+    init()
+
+</script>
+</body>
+</html>
