@@ -64,7 +64,8 @@
             background: purple;
             transform: rotate(-91deg);
         }
-        .bottom{
+
+        .bottom {
             margin: 25px;
             border-radius: 10px;
             position: fixed;
@@ -72,7 +73,7 @@
             z-index: 9999;
             bottom: 0;
             table-layout: fixed;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             color: white;
         }
 
@@ -91,6 +92,9 @@
             </select>
             <button onclick="setIndexPosition()">确定</button>
         </td>
+
+        <td rowspan="2" id="order"><span style="display: block">拖动切换顺序：<button onclick="change()">确定更换</button></span>
+        </td>
     </tr>
     <tr>
         <td>显示/隐藏</td>
@@ -102,62 +106,132 @@
 
 </div>
 <script>
-    const moves = ['zIndexPlus' , 'zIndexAuto',  'inline', 'inlineBlock','float', 'block',  'zIndex0', 'zIndexSub']
+    let moves = ['zIndexPlus', 'zIndexAuto', 'inline', 'inlineBlock', 'float', 'block', 'zIndex0', 'zIndexSub']
     const classes = {
-        inline:'inline',
-        inlineBlock:'block-inline',
-        float:'float',
-        block:'block',
-        zIndexPlus:'z-index-plus z-index',
-        zIndex0:'z-index-zero z-index',
-        zIndexSub:'z-index-sub z-index',
-        zIndexAuto:'z-index-auto z-index'
+        inline: 'inline',
+        inlineBlock: 'block-inline',
+        float: 'float',
+        block: 'block',
+        zIndexPlus: 'z-index-plus z-index',
+        zIndex0: 'z-index-zero z-index',
+        zIndexSub: 'z-index-sub z-index',
+        zIndexAuto: 'z-index-auto z-index'
     }
 
-    function init() {
+    function generateDiv(item, i, divs) {
+        let temp = document.getElementById(item)
+        if (temp) {
+            temp.remove()
+        }
+
+        let div = document.createElement('div')
+        div.innerText = div.title = `#${i}-${item}`
+        div.className = classes[item]
+        div.id = item
+        divs.push(div)
+    }
+
+    function init(flag = true) {
         const root = document.getElementById('root')
         let moveSelectNode = document.getElementById('action')
+        let orders = document.getElementById('order')
+
+
         let nodes = []
         let divs = []
-        for (let i=1 ;i<=moves.length;i++) {
-            let item = moves[i-1]
-            let div = document.createElement('div')
-            div.innerText = div.title = `#${i}-${item}`
-            div.className = classes[item]
-            div.id = item
-            divs.push(div)
+        let buttons = []
 
+        for (let i = 1; i <= moves.length; i++) {
+            let item = moves[i - 1]
+            generateDiv(item, i, divs)
             // init checkbox
+            let sp_t = document.getElementById(item + 'sp')
+            if (sp_t) {
+                sp_t.remove()
+            }
+            let sp = document.createElement('span')
+            sp.id = item + 'sp'
+
             let checkbox = document.createElement('input')
             checkbox.type = 'checkbox'
             checkbox.checked = true
             checkbox.value = item
-            checkbox.addEventListener('click',()=>{
+            checkbox.addEventListener('click', () => {
                 const target = document.getElementById(item)
-                if(!checkbox.checked&&target){
+                if (!checkbox.checked && target) {
                     target.style.visibility = 'hidden'
-                }else {
+                } else {
                     target.style.visibility = 'visible'
                 }
             })
+
             let span = document.createElement('span')
             span.innerText = `#${i}-${item}`
-            nodes.push(checkbox)
-            nodes.push(span)
+
+            //init order button
+            const button_t = document.getElementById(`${item}_btn`)
+            if (button_t) {
+                button_t.remove()
+            }
+            const button = document.createElement('button')
+            button.innerText = `#${i}-${item}`
+            button.draggable = true
+
+            button.id = `${item}_btn`
+            button.ondrop = (event) => {
+                event.preventDefault();
+                let data = event.dataTransfer.getData("button")
+                console.log(data, 'data');
+                let target_button = document.getElementById(data)
+                let src_button = event.target
+                console.log(src_button)
+                swap(target_button, src_button)
+            }
+            button.ondragover = (event) => {
+                event.preventDefault();
+            }
+            button.ondragstart = (event) => {
+                event.dataTransfer.setData("button", event.target.id);
+            }
+            buttons.push(button)
+
+
+            sp.append(checkbox, span)
+            nodes.push(sp)
         }
         root.append(...divs)
         moveSelectNode.append(...nodes)
+        orders.append(...buttons)
     }
 
+    function swap(a, b) {
+        let temp = {
+            id: a.id,
+            innerText: a.innerText
+        };
+        a.id = b.id
+        a.innerText = b.innerText
+        b.id = temp.id
+        b.innerText = temp.innerText
+    }
 
     function setIndexPosition() {
         const val = document.getElementById('select').value;
         let zIndex = document.getElementsByClassName('z-index')
-        console.log(zIndex)
         for (let item of zIndex) {
             item.style.position = val
         }
     }
+
+    function change() {
+        const buttons = document.getElementById('order').querySelectorAll(`button[id$='_btn']`)
+        moves = []
+        buttons.forEach(button => {
+            moves.push(button.id.replace(/_btn/g, ''))
+        })
+        init()
+    }
+
     init()
 
 </script>
