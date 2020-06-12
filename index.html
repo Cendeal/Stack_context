@@ -217,7 +217,7 @@
 <table class="control">
     <caption style="color: black">
         <label style="display: block">当前移动控制:</label>
-        <b id="current_control">无</b>
+        <b id="current_control">无(点击div选择目标)</b>
     </caption>
     <tr>
         <td></td>
@@ -252,7 +252,7 @@
     let div_boxes = ['zIndexPositive', 'zIndexAuto', 'inline', 'inlineBlock', 'float', 'block', 'zIndexZero', 'zIndexNegative']
     let currentControl = {
         id: 'current_control',
-        value: '无',
+        value: '无(点击div选择目标)',
         position: {
             top: 0,
             left: 0
@@ -369,7 +369,7 @@
 
             }
         })
-        currentControl.value = '无'
+        currentControl.value = '无(点击div选择目标)'
         currentControl.position.top = 0
         currentControl.position.left = 0
 
