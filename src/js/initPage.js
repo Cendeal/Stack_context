@@ -103,7 +103,7 @@ function resetIt() {
 
 }
 
-function init(flag=true) {
+function init(flag = true) {
     let orders = document.getElementById('order')
 
     if (is_pc) {
@@ -120,7 +120,7 @@ function init(flag=true) {
         let item = div_boxes[i - 1]
         generateDiv(item, i, divs)
 
-        if(flag){
+        if (flag) {
             // init checkbox
             let sp_t = document.getElementById(item + 'sp')
             if (sp_t) {
@@ -176,6 +176,9 @@ function init(flag=true) {
             }
         } else {
             button.onclick = (event) => {
+                if (clickChangeNodes.length === 1 && event.target.id === clickChangeNodes[0].id) {
+                    return
+                }
                 clickChangeNodes.push(event.target)
                 if (clickChangeNodes.length === 2) {
                     if (confirm(`确定交换${clickChangeNodes[0].innerText}和${clickChangeNodes[1].innerText}？`)) {
@@ -192,7 +195,7 @@ function init(flag=true) {
     const root = document.getElementById('root')
     root.append(...divs)
     //checkboxes
-    if(flag){
+    if (flag) {
         let moveSelectNode = document.getElementById('action')
         moveSelectNode.append(...nodes)
     }
