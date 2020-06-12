@@ -24,12 +24,12 @@ function generateDiv(item, i, divs) {
     div.innerText = div.title = `#${i}-${item}`
     div.className = classes[item] + ' box'
     div.id = item
-    div.addEventListener('click', () => {
+    div.onclick = () => {
         currentControl.value = item
         currentControl.flag = false
         currentControl.position.top = 0
         currentControl.position.left = 0
-    })
+    }
     divs.push(div)
 }
 
@@ -107,10 +107,10 @@ function init() {
     const root = document.getElementById('root')
     let moveSelectNode = document.getElementById('action')
     let orders = document.getElementById('order')
-    if(is_pc){
-        orders.innerHTML ='<span style="display: block">拖动切换顺序：<button onclick="change()">确定更换</button></span>'
-    }else {
-        orders.innerHTML ='<span style="display: block">点击两两切换顺序：</span>'
+    if (is_pc) {
+        orders.innerHTML = '<span style="display: block">拖动切换顺序：<button onclick="change()">确定更换</button></span>'
+    } else {
+        orders.innerHTML = '<span style="display: block">点击两两切换顺序：</span>'
     }
 
 
@@ -133,14 +133,14 @@ function init() {
         checkbox.type = 'checkbox'
         checkbox.checked = true
         checkbox.value = item
-        checkbox.addEventListener('click', () => {
+        checkbox.onclick = () => {
             const target = document.getElementById(item)
             if (!checkbox.checked && target) {
                 target.style.display = 'none'
             } else {
                 target.style.display = ''
             }
-        })
+        }
 
         let span = document.createElement('span')
         span.innerText = `#${i}-${item}`
@@ -155,7 +155,7 @@ function init() {
         button.innerText = `#${i}-${item}`
         button.id = `${item}_btn`
 
-        if(is_pc){
+        if (is_pc) {
             button.draggable = true
             button.ondrop = (event) => {
                 event.preventDefault();
@@ -172,11 +172,19 @@ function init() {
             button.ondragstart = (event) => {
                 event.dataTransfer.setData("button", event.target.id);
             }
+        } else {
+            button.onclick = (event) => {
+                clickChangeNodes.push(event.target)
+                if (clickChangeNodes.length === 2) {
+                    if (confirm(`确定交换${clickChangeNodes[0].innerText}和${clickChangeNodes[1].innerText}？`)) {
+                        swap(clickChangeNodes[0], clickChangeNodes[1])
+                    }
+                    clickChangeNodes = []
+                }
+            }
         }
 
         buttons.push(button)
-
-
         sp.append(checkbox, span)
         nodes.push(sp)
     }
@@ -235,5 +243,8 @@ const classes = {
     zIndexNegative: 'z-index-negative z-index z-index-negative-color',
     zIndexAuto: 'z-index-auto z-index z-index-auto-color'
 }
+//点击节点
+let clickChangeNodes = []
+
 init()
 bindNode(document.getElementById(currentControl.id), currentControl, 'value')

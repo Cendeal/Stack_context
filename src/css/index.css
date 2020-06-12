@@ -7,7 +7,7 @@ button {
 }
 
 .control {
-    margin: 25px;
+    margin: 1rem;
     border-radius: 10px;
     position: fixed;
     max-width: 600px;
