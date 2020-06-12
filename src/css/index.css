@@ -1,0 +1,177 @@
+html {
+    user-select: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+.control {
+    margin: 25px;
+    border-radius: 10px;
+    position: fixed;
+    max-width: 600px;
+    z-index: 9999;
+    right: 0;
+    top: 0;
+    table-layout: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.control td {
+    text-align: center;
+}
+
+.control button {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.control button:focus {
+    outline: none;
+}
+
+div {
+    /*width: 500px;*/
+    height: 8vh;
+}
+
+.box:hover {
+    cursor: pointer;
+    box-shadow: 3px 3px 6px grey;
+    margin-top: 1px;
+    margin-bottom: 4px;
+}
+
+.z-index {
+    text-align: center;
+}
+
+.root {
+    margin-top: 100px;
+    background: rgba(169, 222, 211, 0.85);
+    opacity: 0.85; /*创建新的层叠上下文,目的是让root为一个上下文*/
+    padding: 8px;
+    height: 60vh;
+    width: 90vw;
+}
+
+.block {
+    display: block;
+}
+
+.block-color {
+    background: dodgerblue;
+    color: white;
+}
+
+.inline-block {
+    display: inline-block;
+    position: relative;
+}
+
+.inline-block-color {
+    background: blue;
+    color: white;
+}
+
+.float {
+    float: left;
+}
+
+.float-color {
+    background: green;
+    color: white;
+}
+
+.inline {
+    display: inline;
+    position: relative;
+    padding: 0 20px;
+}
+
+.inline-color {
+    background: greenyellow;
+}
+
+.z-index-auto {
+    z-index: auto;
+}
+
+.z-index-auto-color {
+    background: orange;
+}
+
+.z-index-zero {
+    z-index: 0;
+}
+
+.z-index-zero-color {
+    background: oldlace;
+}
+
+.z-index-positive {
+    z-index: 1;
+}
+
+.z-index-positive-color {
+    background: red;
+    color: white;
+}
+
+.z-index-negative {
+    z-index: -1;
+}
+
+.z-index-negative-color {
+    background: purple;
+    color: white;
+
+}
+
+.order-btn {
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.bottom {
+    margin: 25px;
+    border-radius: 10px;
+    position: fixed;
+    max-width: 600px;
+    z-index: 9999;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.setting {
+    position: fixed;
+    z-index: 9999;
+    bottom: 10px;
+}
+
+.setting-btn {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 3rem;
+}
+
+.setting-btn:focus {
+    outline: none;
+}
+
+.cancel-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 2rem;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+}
+
+.cancel-btn:focus {
+    outline: none;
+}
