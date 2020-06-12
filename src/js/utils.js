@@ -1,7 +1,6 @@
-// getOS is fromsource code form https://im.qq.com/
 /**
- *
- * @returns {null}
+ *getOS is from source code form https://im.qq.com/
+ * @returns {}
  */
 function getOS() {
     let userAgent = window.navigator.userAgent,
