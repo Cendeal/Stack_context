@@ -5,65 +5,142 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stack context</title>
     <style>
-        div {
-            width: 500px;
-            height: 30px;
+        html {
             user-select: none;
         }
 
+        button {
+            cursor: pointer;
+        }
+
+        .control {
+            margin: 25px;
+            border-radius: 10px;
+            position: fixed;
+            max-width: 600px;
+            z-index: 9999;
+            right: 0;
+            top: 0;
+            table-layout: fixed;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .control td {
+            text-align: center;
+        }
+
+        .control button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .control button:focus {
+            outline: none;
+        }
+
+        div {
+            /*width: 500px;*/
+            height: 8vh;
+        }
+
+        .box:hover {
+            cursor: pointer;
+            box-shadow: 3px 3px 6px grey;
+            margin-top: 1px;
+            margin-bottom: 4px;
+        }
+
+        .z-index {
+            text-align: center;
+        }
+
         .root {
-            height: 500px;
-            width: 800px;
             margin-top: 100px;
-            background: rgba(26, 255, 214, 0.85);
+            background: #aae0d6d9;
+            opacity: 0.85; /*创建新的层叠上下文,目的是让root为一个上下文*/
+            padding: 8px;
+            height: 60vh;
+            width: 90vw;
         }
 
         .block {
             display: block;
-            background: dodgerblue;
-            transform: rotate(-35deg);
         }
 
-        .block-inline {
+        .block-color {
+            background: dodgerblue;
+            color: white;
+        }
+
+        .inline-block {
             display: inline-block;
+            position: relative;
+        }
+
+        .inline-block-color {
             background: blue;
-            transform: rotate(-13deg);
+            color: white;
         }
 
         .float {
             float: left;
+        }
+
+        .float-color {
             background: green;
-            transform: rotate(-69deg);
+            color: white;
         }
 
         .inline {
             display: inline;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .inline-color {
             background: greenyellow;
-            padding-right: 1000px;
         }
 
         .z-index-auto {
             z-index: auto;
+        }
+
+        .z-index-auto-color {
             background: orange;
-            transform: rotate(-56deg);
         }
 
         .z-index-zero {
             z-index: 0;
+        }
+
+        .z-index-zero-color {
             background: oldlace;
-            transform: rotate(-139deg);
         }
 
-        .z-index-plus {
+        .z-index-positive {
             z-index: 1;
-            background: red;
-            transform: rotate(-110deg);
         }
 
-        .z-index-sub {
+        .z-index-positive-color {
+            background: red;
+            color: white;
+        }
+
+        .z-index-negative {
             z-index: -1;
+        }
+
+        .z-index-negative-color {
             background: purple;
-            transform: rotate(-91deg);
+            color: white;
+
+        }
+
+        .order-btn {
+            padding: 8px;
+            border-radius: 8px;
         }
 
         .bottom {
@@ -73,19 +150,51 @@
             max-width: 600px;
             z-index: 9999;
             bottom: 0;
-            table-layout: fixed;
             background: rgba(0, 0, 0, 0.5);
             color: white;
+        }
+
+        .setting {
+            position: fixed;
+            z-index: 9999;
+            bottom: 10px;
+        }
+
+        .setting-btn {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 3rem;
+        }
+
+        .setting-btn:focus {
+            outline: none;
+        }
+
+        .cancel-btn {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 2rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+        }
+
+        .cancel-btn:focus {
+            outline: none;
         }
 
     </style>
 </head>
 <body>
-<table class="bottom">
+<table class="bottom" hidden id="bottom">
+    <caption>
+        <button onclick="hiddenBottom()" class="cancel-btn" title="close">X</button>
+    </caption>
     <tr>
         <td>zIndex的position</td>
         <td>
             <select id="select">
+                <option></option>
                 <option>static</option>
                 <option>relative</option>
                 <option>absolute</option>
@@ -102,34 +211,168 @@
         <td id="action"></td>
     </tr>
 </table>
-
+<div class="setting" id="setting">
+    <button class="setting-btn" onclick="show()">设置</button>
+</div>
+<table class="control">
+    <caption style="color: black">
+        <label style="display: block">当前移动控制:</label>
+        <b id="current_control">无</b>
+    </caption>
+    <tr>
+        <td></td>
+        <td>
+            <button onclick="move('up')">Up</button>
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>
+            <button onclick="move('left')">Left</button>
+        </td>
+        <td>
+            <button onclick="resetIt()">Reset</button>
+        </td>
+        <td>
+            <button onclick="move('right')">Right</button>
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+            <button onclick="move('down')">Down</button>
+        </td>
+        <td></td>
+    </tr>
+</table>
 <div class="root" id="root" title="0#root">0#root
 
 </div>
 <script>
-    let moves = ['zIndexPlus', 'zIndexAuto', 'inline', 'inlineBlock', 'float', 'block', 'zIndex0', 'zIndexSub']
+    let div_boxes = ['zIndexPositive', 'zIndexAuto', 'inline', 'inlineBlock', 'float', 'block', 'zIndexZero', 'zIndexNegative']
+    let currentControl = {
+        id: 'current_control',
+        value: '无',
+        position: {
+            top: 0,
+            left: 0
+        }
+    }
+    bindNode(document.getElementById(currentControl.id), currentControl, 'value')
     const classes = {
-        inline: 'inline',
-        inlineBlock: 'block-inline',
-        float: 'float',
-        block: 'block',
-        zIndexPlus: 'z-index-plus z-index',
-        zIndex0: 'z-index-zero z-index',
-        zIndexSub: 'z-index-sub z-index',
-        zIndexAuto: 'z-index-auto z-index'
+        inline: 'inline inline-color',
+        inlineBlock: 'inline-block inline-block-color',
+        float: 'float float-color',
+        block: 'block block-color',
+        zIndexPositive: 'z-index-positive-color z-index-positive z-index',
+        zIndexZero: 'z-index-zero z-index z-index-zero-color',
+        zIndexNegative: 'z-index-negative z-index z-index-negative-color',
+        zIndexAuto: 'z-index-auto z-index z-index-auto-color'
+    }
+
+    function bindNode(node, object, property) {
+        Object.defineProperty(object, property, {
+            set(v) {
+                node.innerText = v
+            },
+            get() {
+                return node.innerText
+            }
+        })
+
     }
 
     function generateDiv(item, i, divs) {
         let temp = document.getElementById(item)
+        let display = ''
         if (temp) {
+            display = temp.style.display
             temp.remove()
         }
 
         let div = document.createElement('div')
+        div.style.display = display
         div.innerText = div.title = `#${i}-${item}`
-        div.className = classes[item]
+        div.className = classes[item] + ' box'
         div.id = item
+        div.addEventListener('click', () => {
+            currentControl.value = item
+            currentControl.flag = false
+            currentControl.position.top = 0
+            currentControl.position.left = 0
+        })
         divs.push(div)
+    }
+
+    function show() {
+        document.getElementById('setting').hidden = true
+        document.getElementById('bottom').hidden = false
+    }
+
+    function hiddenBottom() {
+        document.getElementById('setting').hidden = false
+        document.getElementById('bottom').hidden = true
+    }
+
+    function move(direction) {
+        const move_t = document.getElementById(currentControl.value)
+        const is_inline = currentControl.value.includes('inline')
+        if (move_t) {
+            switch (direction) {
+                case 'up':
+                    if (is_inline) {
+                        move_t.style.top = `${currentControl.position.top -= 10}px`
+                    } else {
+                        move_t.style.marginTop = `${currentControl.position.top -= 10}px`
+                    }
+                    break
+                case 'left':
+                    if (is_inline) {
+                        move_t.style.left = `${currentControl.position.left -= 10}px`
+                    } else {
+                        move_t.style.marginLeft = `${currentControl.position.left -= 10}px`
+                    }
+                    break
+                case 'right':
+                    if (is_inline) {
+                        move_t.style.left = `${currentControl.position.left += 10}px`
+                    } else {
+                        move_t.style.marginLeft = `${currentControl.position.left += 10}px`
+                    }
+                    break
+                case 'down':
+                    if (is_inline) {
+                        move_t.style.top = `${currentControl.position.top += 10}px`
+
+                    } else {
+                        move_t.style.marginTop = `${currentControl.position.top += 10}px`
+                    }
+                    break
+            }
+        }
+
+    }
+
+
+    function resetIt() {
+        div_boxes.forEach(item => {
+            const move_t = document.getElementById(item)
+            const is_inline = item.includes('inline')
+            if (move_t) {
+                if (!is_inline) {
+                    move_t.style.marginTop = ''
+                    move_t.style.marginLeft = ''
+                } else {
+                    move_t.style.top = ''
+                    move_t.style.left = ''
+                }
+
+            }
+        })
+        currentControl.value = '无'
+        currentControl.position.top = 0
+        currentControl.position.left = 0
+
     }
 
     function init() {
@@ -142,8 +385,8 @@
         let divs = []
         let buttons = []
 
-        for (let i = 1; i <= moves.length; i++) {
-            let item = moves[i - 1]
+        for (let i = 1; i <= div_boxes.length; i++) {
+            let item = div_boxes[i - 1]
             generateDiv(item, i, divs)
             // init checkbox
             let sp_t = document.getElementById(item + 'sp')
@@ -160,9 +403,9 @@
             checkbox.addEventListener('click', () => {
                 const target = document.getElementById(item)
                 if (!checkbox.checked && target) {
-                    target.style.visibility = 'hidden'
+                    target.style.display = 'none'
                 } else {
-                    target.style.visibility = 'visible'
+                    target.style.display = ''
                 }
             })
 
@@ -175,6 +418,7 @@
                 button_t.remove()
             }
             const button = document.createElement('button')
+            button.className = `${item.replace(/([A-Z])/g, "-$1").toLowerCase()}-color order-btn`
             button.innerText = `#${i}-${item}`
             button.draggable = true
 
@@ -203,17 +447,19 @@
         root.append(...divs)
         moveSelectNode.append(...nodes)
         orders.append(...buttons)
+        setIndexPosition()
     }
 
     function swap(a, b) {
         let temp = {
             id: a.id,
-            innerText: a.innerText
+            innerText: a.innerText,
+            className: a.className
         };
         a.id = b.id
         a.innerText = b.innerText
-        b.id = temp.id
-        b.innerText = temp.innerText
+        a.className = b.className
+        Object.assign(b, temp)
     }
 
     function setIndexPosition() {
@@ -226,9 +472,9 @@
 
     function change() {
         const buttons = document.getElementById('order').querySelectorAll(`button[id$='_btn']`)
-        moves = []
+        div_boxes = []
         buttons.forEach(button => {
-            moves.push(button.id.replace(/_btn/g, ''))
+            div_boxes.push(button.id.replace(/_btn/g, ''))
         })
         init()
     }
