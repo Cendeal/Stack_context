@@ -178,6 +178,7 @@ function init() {
                 if (clickChangeNodes.length === 2) {
                     if (confirm(`确定交换${clickChangeNodes[0].innerText}和${clickChangeNodes[1].innerText}？`)) {
                         swap(clickChangeNodes[0], clickChangeNodes[1])
+                        init()
                     }
                     clickChangeNodes = []
                 }
