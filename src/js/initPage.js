@@ -1,30 +1,4 @@
 //please insert utils.js before
-const is_pc = isPc()
-alert(is_pc)
-if(!is_pc){
-    document.getElementById('pc_change').hidden = true
-}
-let div_boxes = ['zIndexPositive', 'zIndexAuto', 'inline', 'inlineBlock', 'float', 'block', 'zIndexZero', 'zIndexNegative']
-let currentControl = {
-    id: 'current_control',
-    value: '无(点击div选择目标)',
-    position: {
-        top: 0,
-        left: 0
-    }
-}
-bindNode(document.getElementById(currentControl.id), currentControl, 'value')
-const classes = {
-    inline: 'inline inline-color',
-    inlineBlock: 'inline-block inline-block-color',
-    float: 'float float-color',
-    block: 'block block-color',
-    zIndexPositive: 'z-index-positive-color z-index-positive z-index',
-    zIndexZero: 'z-index-zero z-index z-index-zero-color',
-    zIndexNegative: 'z-index-negative z-index z-index-negative-color',
-    zIndexAuto: 'z-index-auto z-index z-index-auto-color'
-}
-
 function bindNode(node, object, property) {
     Object.defineProperty(object, property, {
         set(v) {
@@ -133,6 +107,11 @@ function init() {
     const root = document.getElementById('root')
     let moveSelectNode = document.getElementById('action')
     let orders = document.getElementById('order')
+    if(is_pc){
+        orders.innerHTML ='<span style="display: block">拖动切换顺序：<button onclick="change()">确定更换</button></span>'
+    }else {
+        orders.innerHTML ='<span style="display: block">点击两两切换顺序：</span>'
+    }
 
 
     let nodes = []
@@ -174,24 +153,27 @@ function init() {
         const button = document.createElement('button')
         button.className = `${item.replace(/([A-Z])/g, "-$1").toLowerCase()}-color order-btn`
         button.innerText = `#${i}-${item}`
-        button.draggable = true
-
         button.id = `${item}_btn`
-        button.ondrop = (event) => {
-            event.preventDefault();
-            let data = event.dataTransfer.getData("button")
-            console.log(data, 'data');
-            let target_button = document.getElementById(data)
-            let src_button = event.target
-            console.log(src_button)
-            swap(target_button, src_button)
+
+        if(is_pc){
+            button.draggable = true
+            button.ondrop = (event) => {
+                event.preventDefault();
+                let data = event.dataTransfer.getData("button")
+                console.log(data, 'data');
+                let target_button = document.getElementById(data)
+                let src_button = event.target
+                console.log(src_button)
+                swap(target_button, src_button)
+            }
+            button.ondragover = (event) => {
+                event.preventDefault();
+            }
+            button.ondragstart = (event) => {
+                event.dataTransfer.setData("button", event.target.id);
+            }
         }
-        button.ondragover = (event) => {
-            event.preventDefault();
-        }
-        button.ondragstart = (event) => {
-            event.dataTransfer.setData("button", event.target.id);
-        }
+
         buttons.push(button)
 
 
@@ -232,4 +214,26 @@ function change() {
     })
     init()
 }
+
+const is_pc = isPc()
+let div_boxes = ['zIndexPositive', 'zIndexAuto', 'inline', 'inlineBlock', 'float', 'block', 'zIndexZero', 'zIndexNegative']
+let currentControl = {
+    id: 'current_control',
+    value: '无(点击div选择目标)',
+    position: {
+        top: 0,
+        left: 0
+    }
+}
+const classes = {
+    inline: 'inline inline-color',
+    inlineBlock: 'inline-block inline-block-color',
+    float: 'float float-color',
+    block: 'block block-color',
+    zIndexPositive: 'z-index-positive-color z-index-positive z-index',
+    zIndexZero: 'z-index-zero z-index z-index-zero-color',
+    zIndexNegative: 'z-index-negative z-index z-index-negative-color',
+    zIndexAuto: 'z-index-auto z-index z-index-auto-color'
+}
 init()
+bindNode(document.getElementById(currentControl.id), currentControl, 'value')

@@ -52,7 +52,7 @@ div {
 .root {
     margin-top: 100px;
     background: rgba(169, 222, 211, 0.85);
-    opacity: 0.85; /*创建新的层叠上下文,目的是让root为一个上下文*/
+    isolation : isolate ; /*创建新的层叠上下文,目的是让root为一个上下文*/
     padding: 8px;
     height: 60vh;
     width: 90vw;
