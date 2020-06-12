@@ -103,16 +103,14 @@ function resetIt() {
 
 }
 
-function init() {
-    const root = document.getElementById('root')
-    let moveSelectNode = document.getElementById('action')
+function init(flag=true) {
     let orders = document.getElementById('order')
+
     if (is_pc) {
         orders.innerHTML = '<span style="display: block">拖动切换顺序：<button onclick="change()">确定更换</button></span>'
     } else {
         orders.innerHTML = '<span style="display: block">点击两两切换顺序：</span>'
     }
-
 
     let nodes = []
     let divs = []
@@ -121,29 +119,35 @@ function init() {
     for (let i = 1; i <= div_boxes.length; i++) {
         let item = div_boxes[i - 1]
         generateDiv(item, i, divs)
-        // init checkbox
-        let sp_t = document.getElementById(item + 'sp')
-        if (sp_t) {
-            sp_t.remove()
-        }
-        let sp = document.createElement('span')
-        sp.id = item + 'sp'
 
-        let checkbox = document.createElement('input')
-        checkbox.type = 'checkbox'
-        checkbox.checked = true
-        checkbox.value = item
-        checkbox.onclick = () => {
-            const target = document.getElementById(item)
-            if (!checkbox.checked && target) {
-                target.style.display = 'none'
-            } else {
-                target.style.display = ''
+        if(flag){
+            // init checkbox
+            let sp_t = document.getElementById(item + 'sp')
+            if (sp_t) {
+                sp_t.remove()
             }
+            let sp = document.createElement('span')
+            sp.id = item + 'sp'
+
+            let checkbox = document.createElement('input')
+            checkbox.type = 'checkbox'
+            checkbox.checked = true
+            checkbox.value = item
+            checkbox.onclick = () => {
+                const target = document.getElementById(item)
+                if (!checkbox.checked && target) {
+                    target.style.display = 'none'
+                } else {
+                    target.style.display = ''
+                }
+            }
+
+            let span = document.createElement('span')
+            span.innerText = `#${i}-${item}`
+            sp.append(checkbox, span)
+            nodes.push(sp)
         }
 
-        let span = document.createElement('span')
-        span.innerText = `#${i}-${item}`
 
         //init order button
         const button_t = document.getElementById(`${item}_btn`)
@@ -160,10 +164,8 @@ function init() {
             button.ondrop = (event) => {
                 event.preventDefault();
                 let data = event.dataTransfer.getData("button")
-                console.log(data, 'data');
                 let target_button = document.getElementById(data)
                 let src_button = event.target
-                console.log(src_button)
                 swap(target_button, src_button)
             }
             button.ondragover = (event) => {
@@ -184,13 +186,18 @@ function init() {
                 }
             }
         }
-
         buttons.push(button)
-        sp.append(checkbox, span)
-        nodes.push(sp)
     }
+    //主要元素
+    const root = document.getElementById('root')
     root.append(...divs)
-    moveSelectNode.append(...nodes)
+    //checkboxes
+    if(flag){
+        let moveSelectNode = document.getElementById('action')
+        moveSelectNode.append(...nodes)
+    }
+
+    //顺序切换按钮功能
     orders.append(...buttons)
     setIndexPosition()
 }
@@ -221,7 +228,7 @@ function change() {
     buttons.forEach(button => {
         div_boxes.push(button.id.replace(/_btn/g, ''))
     })
-    init()
+    init(false)
 }
 
 const is_pc = isPc()
