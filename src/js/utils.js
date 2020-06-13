@@ -27,3 +27,7 @@ function getOS() {
 function isPc() {
     return getOS() === 'Windows'
 }
+//是否微信浏览器
+function isWechat() {
+    return !!window.navigator.userAgent.toLowerCase().match(/MicroMessenger/i);
+}

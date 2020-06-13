@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="src/css/index.css">
     <script type="text/javascript" src="src/js/utils.js"></script>
 </head>
-<body>
+<body id="app">
 <table class="bottom" hidden id="bottom">
     <caption>
         <button onclick="hiddenBottom()" class="cancel-btn" title="close"></button>
@@ -67,6 +67,15 @@
     </tr>
 </table>
 <div class="root" id="root" title="0#root">0#root</div>
-<script src="src/js/initPage.js"></script>
+<script type="text/javascript">
+    if(isPc()&&isWechat()){
+        alert('请用其他浏览器打开!')
+    }else {
+        const head = document.getElementsByTagName("head")[0]
+        const init_js = document.createElement('script')
+        init_js.src = `src/js/initPage.js?t=${new Date().getTime()}`
+        head.append(init_js)
+    }
+</script>
 </body>
 </html>
